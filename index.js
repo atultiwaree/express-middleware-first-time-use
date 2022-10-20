@@ -1,11 +1,10 @@
 const http = require("http");
 const exp = require("express");
-const parser = require("body-parser");
 const app = exp();
 const server = http.createServer(app);
 app.use(exp.json());
 app.use(exp.urlencoded({ extended: true }));
-
+const { checkPoint } = require("./middleWares/index");
 //Defined global Array
 const globalUser = [];
 
@@ -64,6 +63,24 @@ app.put("/upd", (req, res) => {
   } else {
     res.send({ isUserPresent: false });
   }
+});
+
+//Using custom middleware for checking user details from post body data; Date : 20Oct...
+
+app.post("/reguser", checkPoint, (req, res) => {
+  res.status(200);
+  res.json({
+    isCorrect: true,
+    data: {
+      name: req.body.name,
+      age: req.body.age,
+      married: req.body.married,
+    },
+  });
+});
+
+app.post("/test", (req, res) => {
+  return res.json({ data: req.body });
 });
 
 const PORT = process.env.PORT || 3000;
