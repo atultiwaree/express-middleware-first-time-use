@@ -7,7 +7,7 @@ const checkPoint = (req, res, next) => {
         res.status(400);
         res.json({
           error: "clientError",
-          response: "Enter bool if married or not",
+          response: "Enter yes if married",
         });
       }
     } else {

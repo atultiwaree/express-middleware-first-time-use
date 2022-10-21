@@ -5,6 +5,22 @@ const server = http.createServer(app);
 app.use(exp.json());
 app.use(exp.urlencoded({ extended: true }));
 const { checkPoint } = require("./middleWares/index");
+
+//Adding multer for file upload
+const multer = require("multer");
+
+//Making multer object
+const upload = multer({
+  storage: multer.diskStorage({
+    destination: (req, file, cb) => {
+      cb(null, "public");
+    },
+    filename: (req, file, cb) => {
+      cb(null, file.originalname);
+    },
+  }),
+});
+
 //Defined global Array
 const globalUser = [];
 
@@ -68,8 +84,8 @@ app.put("/upd", (req, res) => {
 //Using custom middleware for checking user details from post body data; Date : 20Oct...
 
 app.post("/reguser", checkPoint, (req, res) => {
-  res.status(200);
-  res.json({
+  console.log(":::::::🥳::::::::");
+  return res.status(200).json({
     isCorrect: true,
     data: {
       name: req.body.name,
@@ -77,6 +93,16 @@ app.post("/reguser", checkPoint, (req, res) => {
       married: req.body.married,
     },
   });
+});
+
+app.post("/upload", upload.single("fldnm"), (req, res) => {
+  const name = req.body.name;
+  const age = req.body.age;
+  const married = req.body.married;
+  const picurl = req.file.path;
+  globalUser.push({ name: name, age: age, married: married, picurl: picurl });
+
+  res.send({ uploaded: true, userDetails: globalUser[0] });
 });
 
 app.post("/test", (req, res) => {
